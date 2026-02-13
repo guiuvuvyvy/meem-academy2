@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>منصة المعلم والطالب - نسخة تجريبية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg-body: #020617;
+      --bg-soft: #020617;
+      --bg-elevated: #020617;
+      --bg-card: #020617;
+      --bg-app: radial-gradient(circle at top left, #1d4ed8 0, transparent 55%),
+        radial-gradient(circle at bottom right, #a855f7 0, transparent 55%),
+        #020617;
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --border-strong: rgba(148, 163, 184, 0.6);
+      --accent: #6366f1;
+      --accent-soft: rgba(99, 102, 241, 0.16);
+      --accent-strong: #4f46e5;
+      --accent-subtle: rgba(129, 140, 248, 0.2);
+      --text-main: #e5e7eb;
+      --text-soft: #cbd5f5;
+      --text-muted: #9ca3af;
+      --text-faint: #6b7280;
+      --danger: #ef4444;
+      --radius-xl: 22px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 22px 55px rgba(15, 23, 42, 0.9);
+      --shadow-card: 0 18px 35px rgba(15, 23, 42, 0.8);
+      --shadow-subtle: 0 1px 0 rgba(148, 163, 184, 0.35);
+      --transition-fast: 160ms ease-out;
+      --transition-med: 220ms ease-out;
+      --divider: rgba(148, 163, 184, 0.3);
+      --chip-bg: rgba(15, 23, 42, 0.7);
+    }
+
+    /* ثيم فاتح (اختياري) */
+    body[data-theme="light"] {
+      --bg-body: #f3f4f6;
+      --bg-soft: #e5e7eb;
+      --bg-elevated: #ffffff;
+      --bg-card: #ffffff;
+      --bg-app: radial-gradient(circle at top left, #93c5fd 0, transparent 55%),
+        radial-gradient(circle at bottom right, #e9d5ff 0, transparent 55%),
+        #eef2ff;
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --border-strong: rgba(148, 163, 184, 0.6);
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.12);
+      --accent-strong: #3730a3;
+      --accent-subtle: rgba(79, 70, 229, 0.14);
+      --text-main: #111827;
+      --text-soft: #1f2937;
+      --text-muted: #6b7280;
+      --text-faint: #9ca3af;
+      --shadow-soft: 0 22px 55px rgba(15, 23, 42, 0.15);
+      --shadow-card: 0 18px 35px rgba(15, 23, 42, 0.12);
+      --divider: rgba(148, 163, 184, 0.4);
+      --chip-bg: rgba(255, 255, 255, 0.7);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Cairo", sans-serif;
+      background: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app {
+      position: relative;
+      width: 100%;
+      max-width: 880px;
+      min-height: min(620px, 100vh - 48px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      padding: 26px 26px 24px;
+      border-radius: var(--radius-xl);
+      background: var(--bg-app);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .app::before,
+    .app::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.45;
+      mix-blend-mode: screen;
+      background:
+        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.12) 0, transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(129, 140, 248, 0.18) 0, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(244, 114, 182, 0.16) 0, transparent 55%);
+      z-index: -1;
+    }
+
+    .app-left,
+    .app-right {
+      position: relative;
+      z-index: 1;
+    }
+
+    .app-left {
+      padding: 8px 8px 4px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      color: var(--text-soft);
+    }
+
+    .app-right {
+      padding: 8px 8px 4px;
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: linear-gradient(
+          145deg,
+          rgba(15, 23, 42, 0.88),
+          rgba(15, 23, 42, 0.96)
+        );
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+    }
+
+    body[data-theme="light"] .app-right {
+      background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.92),
+          rgba(249, 250, 251, 0.98)
+        );
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: var(--shadow-subtle);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    body[data-theme="light"] .badge {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #bbf7d0, #22c55e);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+    }
+
+    .title {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #e5e7eb;
+      margin-top: 8px;
+    }
+
+    .subtitle {
+      margin-top: 5px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 90%;
+    }
+
+    .pill-row {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: var(--text-soft);
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+    }
+
+    body[data-theme="light"] .pill {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .panel {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-lg);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    body[data-theme="light"] .panel {
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+
+    .panel-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    body[data-theme="light"] .panel-tag {
+      background: rgba(249, 250, 251, 0.95);
+    }
+
+    .hint {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    .code-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.9);
+      color: #a5b4fc;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      border: 1px dashed rgba(129, 140, 248, 0.7);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 2px 12px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+    }
+
+    .topbar-logo {
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .topbar-logo span {
+      color: #a5b4fc;
+    }
+
+    body[data-theme="light"] .topbar-logo {
+      color: #111827;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .topbar-theme-toggle {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-soft);
+      font-size: 11px;
+      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background var(--transition-fast), border-color var(--transition-fast),
+        transform var(--transition-fast), box-shadow var(--transition-fast);
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.2);
+    }
+
+    body[data-theme="light"] .topbar-theme-toggle {
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .topbar-theme-toggle:hover {
+      background: rgba(30, 64, 175, 0.9);
+      border-color: #818cf8;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(30, 64, 175, 0.45);
+    }
+
+    body[data-theme="light"] .topbar-theme-toggle:hover {
+      background: #4f46e5;
+      color: #e5e7eb;
+    }
+
+    .section {
+      display: none;
+      padding: 4px 2px 0;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-soft);
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      max-width: 260px;
+      line-height: 1.7;
+    }
+
+    .pill-soft {
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.9);
+      color: #c7d2fe;
+      font-size: 11px;
+      border: 1px solid rgba(129, 140, 248, 0.7);
+      white-space: nowrap;
+    }
+
+    body[data-theme="light"] .pill-soft {
+      background: rgba(255, 255, 255, 0.95);
+      color: #4338ca;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0 12px;
+      color: var(--text-faint);
+      font-size: 11px;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--divider),
+        transparent
+      );
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--transition-med), border-color var(--transition-med),
+        box-shadow var(--transition-med), transform var(--transition-fast);
+      color: inherit;
+      background: transparent;
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      border-color: #6366f1;
+      color: #e5e7eb;
+      box-shadow: 0 12px 30px rgba(79, 70, 229, 0.5);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4338ca, #4f46e5);
+      transform: translateY(-1px);
+      box-shadow: 0 16px 40px rgba(79, 70, 229, 0.65);
+    }
+
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(148, 163, 184, 0.6);
+      color: var(--text-soft);
+    }
+
+    body[data-theme="light"] .btn-ghost {
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.85);
+      border-color: rgba(148, 163, 184, 0.85);
+      transform: translateY(-1px);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      border: 1px solid transparent;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-soft);
+    }
+
+    .tag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+    }
+
+    .tag-role-student {
+      border-color: rgba(59, 130, 246, 0.7);
+      background: radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.3), transparent 55%),
+        rgba(15, 23, 42, 0.96);
+    }
+
+    .tag-role-teacher {
+      border-color: rgba(244, 114, 182, 0.7);
+      background: radial-gradient(circle at 0 0, rgba(244, 114, 182, 0.3), transparent 55%),
+        rgba(15, 23, 42, 0.96);
+    }
+
+    .profile-card {
+      margin-top: 8px;
+      padding: 12px 12px 10px;
+      border-radius: var(--radius-lg);
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    body[data-theme="light"] .profile-card {
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      background: radial-gradient(circle at 0 0, #22d3ee, #4f46e5);
+      color: white;
+      box-shadow: 0 12px 30px rgba(59, 130, 246, 0.6);
+    }
+
+    .profile-meta {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .profile-item-label {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-bottom: 2px;
+    }
+
+    .profile-item-value {
+      font-size: 13px;
+      color: var(--text-soft);
+      font-weight: 500;
+    }
+
+    .empty-state {
+      padding: 10px 10px 9px;
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    body[data-theme="light"] .empty-state {
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .courses-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .course-card {
+      padding: 9px 10px 8px;
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.8);
+    }
+
+    body[data-theme="light"] .course-card {
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .course-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-soft);
+      margin-bottom: 4px;
+    }
+
+    .course-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-bottom: 4px;
+    }
+
+    .course-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 6px;
+    }
+
+    .course-video iframe {
+      width: 100%;
+      height: 165px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .field label {
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      border-radius: 9px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.88);
+      color: var(--text-soft);
+      font-size: 13px;
+      padding: 6px 8px;
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+        background var(--transition-fast), transform var(--transition-fast);
+      resize: vertical;
+      min-height: 32px;
+    }
+
+    body[data-theme="light"] .field input,
+    body[data-theme="light"] .field textarea,
+    body[data-theme="light"] .field select {
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: #818cf8;
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.7);
+      transform: translateY(-0.5px);
+    }
+
+    .helper {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 2px;
+    }
+
+    .success {
+      margin: 6px 0;
+      padding: 6px 9px;
+      border-radius: 10px;
+      font-size: 12px;
+      background: rgba(22, 163, 74, 0.1);
+      color: #bbf7d0;
+      border: 1px solid rgba(34, 197, 94, 0.8);
+    }
+
+    body[data-theme="light"] .success {
+      background: rgba(22, 163, 74, 0.06);
+      color: #15803d;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1000px) {
+      .app {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding: 20px 16px 18px;
+      }
+
+      .subtitle {
+        max-width: 100%;
+      }
+
+      .app-right {
+        margin-top: 8px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+      }
+
+      .app {
+        border-radius: 18px;
+      }
+
+      .section-header {
+        align-items: flex-start;
+      }
+
+      .profile-grid,
+      .form-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <div class="app">
+    <div class="app-right">
+      <div class="topbar">
+        <div class="topbar-logo">
+          EDU<span>Connect</span>
+        </div>
+        <div class="topbar-actions">
+          <button id="themeToggle" class="topbar-theme-toggle" type="button">
+            ثيم داكن
+          </button>
+          <button id="logoutBtn" class="topbar-theme-toggle" type="button" style="display:none;">
+            تسجيل خروج
+          </button>
+        </div>
+      </div>
+
+      <!-- شاشة الدخول وإنشاء الحساب -->
+      <section id="section-auth" class="section active">
+        <div class="section-header">
+          <div>
+            <div class="section-title">أهلاً بك 👋</div>
+            <div class="section-subtitle">
+              قم بإنشاء حساب جديد أو تسجيل الدخول للوصول إلى لوحة تحكم الطالب أو المعلم.
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-bottom:10px;">
+          <button id="authShowLogin" class="btn btn-primary btn-sm" type="button">
+            تسجيل دخول
+          </button>
+          <button id="authShowRegister" class="btn btn-ghost btn-sm" type="button">
+            إنشاء حساب جديد
+          </button>
+        </div>
+
+        <div id="authError" class="empty-state hidden"></div>
+
+        <form id="loginForm" class="panel" style="margin-top:8px;">
+          <div class="panel-header">
+            <div class="panel-title">تسجيل دخول</div>
+          </div>
+          <div class="field">
+            <label for="loginEmail">البريد الإلكتروني</label>
+            <input id="loginEmail" type="email" required />
+          </div>
+          <div class="field">
+            <label for="loginPassword">كلمة المرور</label>
+            <input id="loginPassword" type="password" required />
+          </div>
+          <div class="btn-group" style="margin-top:8px;">
+            <button class="btn btn-primary btn-full" type="submit">
+              دخول
+            </button>
+          </div>
+        </form>
+
+        <form id="registerForm" class="panel hidden" style="margin-top:8px;">
+          <div class="panel-header">
+            <div class="panel-title">إنشاء حساب جديد</div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="registerFullName">الاسم الثلاثي</label>
+              <input id="registerFullName" required />
+            </div>
+            <div class="field">
+              <label for="registerPhone">رقم التليفون</label>
+              <input id="registerPhone" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="registerEmail">البريد الإلكتروني</label>
+            <input id="registerEmail" type="email" required />
+          </div>
+          <div class="field">
+            <label for="registerPassword">كلمة المرور</label>
+            <input id="registerPassword" type="password" required />
+          </div>
+          <div class="field">
+            <label for="registerRole">نوع الحساب</label>
+            <select id="registerRole" required>
+              <option value="student">طالب</option>
+              <option value="teacher">معلم</option>
+            </select>
+          </div>
+
+          <div id="registerStudentFields">
+            <div class="form-row">
+              <div class="field">
+                <label for="registerStudentStage">المرحلة الدراسية</label>
+                <select id="registerStudentStage" required>
+                  <option value="ابتدائي">ابتدائي</option>
+                  <option value="إعدادي">إعدادي</option>
+                  <option value="ثانوي">ثانوي</option>
+                  <option value="جامعي">جامعي</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="registerStudentTerm">الفصل الدراسي</label>
+                <select id="registerStudentTerm" required>
+                  <option value="الأول">الأول</option>
+                  <option value="الثاني">الثاني</option>
+                  <option value="سنوي">سنوي كامل</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="registerStudentYear">السنة الدراسية</label>
+              <select id="registerStudentYear" required></select>
+            </div>
+          </div>
+
+          <div id="registerTeacherFields" class="hidden">
+            <div class="field">
+              <label for="registerTeacherSubject">المادة</label>
+              <select id="registerTeacherSubject" required>
+                <option>اللغة العربية</option>
+                <option>اللغة الإنجليزية</option>
+                <option>الرياضيات</option>
+                <option>الأحياء</option>
+                <option>الفيزياء</option>
+                <option>الكيمياء</option>
+                <option>العلوم</option>
+                <option>الدراسات الاجتماعية</option>
+                <option>التاريخ</option>
+                <option>الجغرافيا</option>
+                <option>الإحصاء</option>
+                <option>اللغة الفرنسية</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-group" style="margin-top:8px;">
+            <button class="btn btn-primary btn-full" type="submit">
+              إنشاء الحساب
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- لوحة تحكم الطالب (لا تغيير فيها) -->
+      <section id="section-student-dashboard" class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">مرحبا يا بطل 👨‍🎓</div>
+            <div class="section-subtitle">
+              هذه صفحتك الرئيسية، تعرض بياناتك والكورسات المتاحة لمرحلتك الدراسية.
+            </div>
+          </div>
+          <span class="tag tag-role-student">
+            <span class="tag-dot"></span>
+            طالب
+          </span>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="avatar" id="studentAvatar">ST</div>
+            <div>
+              <div id="studentNameDisplay" style="font-weight:600;"></div>
+              <div class="profile-meta" id="studentEmailDisplay"></div>
+            </div>
+          </div>
+          <div class="profile-grid">
+            <div>
+              <div class="profile-item-label">الهاتف</div>
+              <div class="profile-item-value" id="studentPhoneDisplay"></div>
+            </div>
+            <div>
+              <div class="profile-item-label">المرحلة الدراسية</div>
+              <div class="profile-item-value" id="studentStageDisplay"></div>
+            </div>
+            <div>
+              <div class="profile-item-label">السنة الدراسية</div>
+              <div class="profile-item-value" id="studentYearDisplay"></div>
+            </div>
+            <div>
+              <div class="profile-item-label">الفصل الدراسي</div>
+              <div class="profile-item-value" id="studentTermDisplay"></div>
+            </div>
+            <div>
+              <div class="profile-item-label">إمكانية التعديل</div>
+              <button id="editStudentProfileBtn" class="btn btn-ghost btn-sm">
+                تعديل البيانات
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="studentEditFormWrapper" class="panel hidden">
+          <div class="panel-header">
+            <div class="panel-title">تعديل بيانات الطالب</div>
+          </div>
+          <form id="studentEditForm">
+            <div class="form-row">
+              <div class="field">
+                <label for="editStudentName">الاسم الثلاثي</label>
+                <input id="editStudentName" required />
+              </div>
+              <div class="field">
+                <label for="editStudentPhone">رقم التليفون</label>
+                <input id="editStudentPhone" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="editStudentStage">المرحلة الدراسية</label>
+                <select id="editStudentStage" required>
+                  <option value="ابتدائي">ابتدائي</option>
+                  <option value="إعدادي">إعدادي</option>
+                  <option value="ثانوي">ثانوي</option>
+                  <option value="جامعي">جامعي</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="editStudentTerm">الفصل الدراسي</label>
+                <select id="editStudentTerm" required>
+                  <option value="الأول">الأول</option>
+                  <option value="الثاني">الثاني</option>
+                  <option value="سنوي">سنوي كامل</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="editStudentYear">السنة الدراسية</label>
+              <select id="editStudentYear" required></select>
+            </div>
+            <div class="btn-group" style="margin-top:8px;">
+              <button class="btn btn-primary btn-sm" type="submit">
+                حفظ التعديلات
+              </button>
+              <button class="btn btn-ghost btn-sm" type="button" id="cancelStudentEdit">
+                إلغاء
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel" style="margin-top:8px;">
+          <div class="panel-header">
+            <div class="panel-title">الكورسات المتاحة لك</div>
+            <span id="studentCoursesTag" class="panel-tag"></span>
+          </div>
+          <div id="studentCoursesContainer" class="courses-list"></div>
+          <div id="studentCoursesEmpty" class="empty-state hidden">
+            لا توجد كورسات مسجلة حتى الآن لمرحلتك. عندما يقوم المعلمون بإضافة
+            كورسات موجهة لنفس المرحلة والفصل الدراسي، ستظهر لك هنا تلقائيًا.
+          </div>
+        </div>
+      </section>
+
+      <!-- لوحة تحكم المعلم (لا تغيير فيها) -->
+      <section id="section-teacher-dashboard" class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">أهلاً أستاذنا 👨‍🏫</div>
+            <div class="section-subtitle">
+              هذه لوحة التحكم الخاصة بك لإدارة بياناتك والكورسات التي تقدمها.
+            </div>
+          </div>
+          <span class="tag tag-role-teacher">
+            <span class="tag-dot"></span>
+            معلم
+          </span>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="avatar" id="teacherAvatar">TR</div>
+            <div>
+              <div id="teacherNameDisplay" style="font-weight:600;"></div>
+              <div class="profile-meta" id="teacherEmailDisplay"></div>
+            </div>
+          </div>
+          <div class="profile-grid">
+            <div>
+              <div class="profile-item-label">الهاتف</div>
+              <div class="profile-item-value" id="teacherPhoneDisplay"></div>
+            </div>
+            <div>
+              <div class="profile-item-label">المادة</div>
+              <div class="profile-item-value" id="teacherSubjectDisplay"></div>
+            </div>
+            <div>
+              <div class="profile-item-label">إمكانية التعديل</div>
+              <button id="editTeacherProfileBtn" class="btn btn-ghost btn-sm">
+                تعديل البيانات
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="teacherEditFormWrapper" class="panel hidden">
+          <div class="panel-header">
+            <div class="panel-title">تعديل بيانات المعلم</div>
+          </div>
+          <form id="teacherEditForm">
+            <div class="form-row">
+              <div class="field">
+                <label for="editTeacherName">الاسم الثلاثي</label>
+                <input id="editTeacherName" required />
+              </div>
+              <div class="field">
+                <label for="editTeacherPhone">رقم التليفون</label>
+                <input id="editTeacherPhone" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="editTeacherSubject">المادة</label>
+              <select id="editTeacherSubject" required>
+                <option>اللغة العربية</option>
+                <option>اللغة الإنجليزية</option>
+                <option>الرياضيات</option>
+                <option>الأحياء</option>
+                <option>الفيزياء</option>
+                <option>الكيمياء</option>
+                <option>العلوم</option>
+                <option>الدراسات الاجتماعية</option>
+                <option>التاريخ</option>
+                <option>الجغرافيا</option>
+                <option>الإحصاء</option>
+                <option>اللغة الفرنسية</option>
+              </select>
+            </div>
+            <div class="btn-group" style="margin-top:8px;">
+              <button class="btn btn-primary btn-sm" type="submit">
+                حفظ التعديلات
+              </button>
+              <button class="btn btn-ghost btn-sm" type="button" id="cancelTeacherEdit">
+                إلغاء
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel" style="margin-top:10px;">
+          <div class="panel-header">
+            <div class="panel-title">إضافة كورس جديد</div>
+          </div>
+          <form id="courseForm">
+            <div class="field">
+              <label for="courseTitle">اسم الكورس</label>
+              <input
+                id="courseTitle"
+                required
+                placeholder="مثال: نحو الصف الثاني الإعدادي"
+              />
+            </div>
+            <div class="field">
+              <label for="courseDescription">وصف مختصر للكورس</label>
+              <textarea
+                id="courseDescription"
+                placeholder="نبذة سريعة عن محتوى الكورس..."
+              ></textarea>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="courseStage">المرحلة المستهدفة</label>
+                <select id="courseStage" required>
+                  <option value="">اختر المرحلة</option>
+                  <option value="ابتدائي">ابتدائي</option>
+                  <option value="إعدادي">إعدادي</option>
+                  <option value="ثانوي">ثانوي</option>
+                  <option value="جامعي">جامعي</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="courseTerm">الفصل الدراسي</label>
+                <select id="courseTerm" required>
+                  <option value="">اختر الفصل</option>
+                  <option value="الأول">الأول</option>
+                  <option value="الثاني">الثاني</option>
+                  <option value="سنوي">سنوي كامل</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="courseYear">السنة الدراسية المستهدفة</label>
+              <select id="courseYear" required></select>
+            </div>
+            <div class="field">
+              <label for="courseVideoUrl">
+                رابط فيديو (مثال: رابط يوتيوب - اختياري)
+              </label>
+              <input
+                id="courseVideoUrl"
+                placeholder="https://www.youtube.com/embed/..."
+              />
+              <div class="helper">
+                ضع رابط <strong>embed</strong> لليوتيوب إذا رغبت في عرض الفيديو
+                داخل المنصة (مثل
+                <span dir="ltr">https://www.youtube.com/embed/ID</span>).
+              </div>
+            </div>
+            <div id="courseMessage" class="success" style="display:none;"></div>
+            <button class="btn btn-primary btn-full" type="submit">
+              إضافة الكورس
+            </button>
+          </form>
+        </div>
+
+        <div class="panel" style="margin-top:10px;">
+          <div class="panel-header">
+            <div class="panel-title">الكورسات التي قمت بإضافتها</div>
+          </div>
+          <div id="teacherCoursesContainer" class="courses-list"></div>
+          <div id="teacherCoursesEmpty" class="empty-state">
+            لم تقم بإضافة أي كورسات بعد. ابدأ بإضافة أول كورس من النموذج بالأعلى.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      getDoc,
+      collection,
+      addDoc,
+      query,
+      where,
+      getDocs,
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZDixgSbxP1eDaoDi63c06prvoQdfa67c",
+      authDomain: "meem-b5e88.firebaseapp.com",
+      projectId: "meem-b5e88",
+      storageBucket: "meem-b5e88.firebasestorage.app",
+      messagingSenderId: "135725169302",
+      appId: "1:135725169302:web:a3574fb511f7f2d9b9e0b7",
+      measurementId: "G-J2D5MF3MDC",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // متغيرات تحكم
+    let currentRole = "student"; // student | teacher
+    let currentUser = null;
+
+    const THEME_KEY = "edu-theme";
+
+    function applyTheme(theme) {
+      document.body.setAttribute("data-theme", theme);
+      if (themeToggle) {
+        themeToggle.textContent = theme === "dark" ? "ثيم فاتح" : "ثيم داكن";
+      }
+    }
+
+    function initTheme() {
+      const saved = window.localStorage.getItem(THEME_KEY);
+      const prefersDark =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      const initial = saved || (prefersDark ? "dark" : "light");
+      applyTheme(initial);
+
+      if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+          const current = document.body.getAttribute("data-theme") || "dark";
+          const next = current === "dark" ? "light" : "dark";
+          window.localStorage.setItem(THEME_KEY, next);
+          applyTheme(next);
+        });
+      }
+    }
+
+    // عناصر واجهة الطالب/المعلم
+    const sectionAuth = document.getElementById("section-auth");
+    const sectionStudentDashboard = document.getElementById("section-student-dashboard");
+    const sectionTeacherDashboard = document.getElementById("section-teacher-dashboard");
+    const themeToggle = document.getElementById("themeToggle");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // عناصر شاشة الدخول/التسجيل
+    const authShowLogin = document.getElementById("authShowLogin");
+    const authShowRegister = document.getElementById("authShowRegister");
+    const authError = document.getElementById("authError");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const registerFullName = document.getElementById("registerFullName");
+    const registerPhone = document.getElementById("registerPhone");
+    const registerEmail = document.getElementById("registerEmail");
+    const registerPassword = document.getElementById("registerPassword");
+    const registerRole = document.getElementById("registerRole");
+    const registerStudentStage = document.getElementById("registerStudentStage");
+    const registerStudentYear = document.getElementById("registerStudentYear");
+    const registerStudentTerm = document.getElementById("registerStudentTerm");
+    const registerTeacherSubject = document.getElementById("registerTeacherSubject");
+    const registerStudentFields = document.getElementById("registerStudentFields");
+    const registerTeacherFields = document.getElementById("registerTeacherFields");
+
+    // عناصر الطالب
+    const studentAvatar = document.getElementById("studentAvatar");
+    const studentNameDisplay = document.getElementById("studentNameDisplay");
+    const studentEmailDisplay = document.getElementById("studentEmailDisplay");
+    const studentPhoneDisplay = document.getElementById("studentPhoneDisplay");
+    const studentStageDisplay = document.getElementById("studentStageDisplay");
+    const studentYearDisplay = document.getElementById("studentYearDisplay");
+    const studentTermDisplay = document.getElementById("studentTermDisplay");
+    const studentCoursesContainer = document.getElementById("studentCoursesContainer");
+    const studentCoursesEmpty = document.getElementById("studentCoursesEmpty");
+    const studentCoursesTag = document.getElementById("studentCoursesTag");
+    const editStudentProfileBtn = document.getElementById("editStudentProfileBtn");
+    const studentEditFormWrapper = document.getElementById("studentEditFormWrapper");
+    const studentEditForm = document.getElementById("studentEditForm");
+    const editStudentName = document.getElementById("editStudentName");
+    const editStudentPhone = document.getElementById("editStudentPhone");
+    const editStudentStage = document.getElementById("editStudentStage");
+    const editStudentTerm = document.getElementById("editStudentTerm");
+    const editStudentYear = document.getElementById("editStudentYear");
+    const cancelStudentEdit = document.getElementById("cancelStudentEdit");
+
+    // عناصر المعلم
+    const teacherAvatar = document.getElementById("teacherAvatar");
+    const teacherNameDisplay = document.getElementById("teacherNameDisplay");
+    const teacherEmailDisplay = document.getElementById("teacherEmailDisplay");
+    const teacherPhoneDisplay = document.getElementById("teacherPhoneDisplay");
+    const teacherSubjectDisplay = document.getElementById("teacherSubjectDisplay");
+    const editTeacherProfileBtn = document.getElementById("editTeacherProfileBtn");
+    const teacherEditFormWrapper = document.getElementById("teacherEditFormWrapper");
+    const teacherEditForm = document.getElementById("teacherEditForm");
+    const editTeacherName = document.getElementById("editTeacherName");
+    const editTeacherPhone = document.getElementById("editTeacherPhone");
+    const editTeacherSubject = document.getElementById("editTeacherSubject");
+    const cancelTeacherEdit = document.getElementById("cancelTeacherEdit");
+    const courseForm = document.getElementById("courseForm");
+    const courseTitle = document.getElementById("courseTitle");
+    const courseDescription = document.getElementById("courseDescription");
+    const courseStage = document.getElementById("courseStage");
+    const courseTerm = document.getElementById("courseTerm");
+    const courseYear = document.getElementById("courseYear");
+    const courseVideoUrl = document.getElementById("courseVideoUrl");
+    const courseMessage = document.getElementById("courseMessage");
+    const teacherCoursesContainer = document.getElementById("teacherCoursesContainer");
+    const teacherCoursesEmpty = document.getElementById("teacherCoursesEmpty");
+
+    function setActiveSection(section) {
+      [
+        sectionAuth,
+        sectionStudentDashboard,
+        sectionTeacherDashboard,
+      ].forEach((s) => s && s.classList.remove("active"));
+      if (section) {
+        section.classList.add("active");
+      }
+    }
+
+    function shortName(name) {
+      if (!name) return "";
+      const parts = name.trim().split(/\s+/);
+      if (parts.length === 1) return parts[0][0]?.toUpperCase() || "";
+      return (
+        (parts[0][0] || "").toUpperCase() +
+        (parts[1] ? (parts[1][0] || "").toUpperCase() : "")
+      );
+    }
+
+    // عرض بيانات الطالب / الكورسات
+    async function renderStudentDashboard() {
+      if (!currentUser || currentUser.role !== "student") return;
+
+      studentAvatar.textContent = shortName(currentUser.fullName || "ST");
+      studentNameDisplay.textContent = currentUser.fullName || "";
+      studentEmailDisplay.textContent = currentUser.email || "";
+      studentPhoneDisplay.textContent = currentUser.phone || "";
+      studentStageDisplay.textContent = currentUser.stage || "-";
+      studentYearDisplay.textContent = currentUser.year || "-";
+      studentTermDisplay.textContent = currentUser.term || "-";
+
+      studentCoursesTag.textContent =
+        (currentUser.stage || "") +
+        " - " +
+        (currentUser.term || "") +
+        (currentUser.year ? " - السنة " + currentUser.year : "");
+
+      // جلب الكورسات من Firestore حسب المرحلة، ثم التصفية بالفصل والسنة في الواجهة
+      const q = query(
+        collection(db, "courses"),
+        where("stage", "==", currentUser.stage || "")
+      );
+
+      const snapshot = await getDocs(q);
+      const filtered = [];
+      snapshot.forEach((docSnap) => {
+        const c = docSnap.data();
+        const termMatch = c.term === currentUser.term;
+        const yearMatch =
+          !currentUser.year ||
+          !c.year ||
+          c.year === currentUser.year;
+        if (termMatch && yearMatch) {
+          filtered.push(c);
+        }
+      });
+
+      studentCoursesContainer.innerHTML = "";
+      if (filtered.length === 0) {
+        studentCoursesEmpty.classList.remove("hidden");
+      } else {
+        studentCoursesEmpty.classList.add("hidden");
+        filtered.forEach((c) => {
+          const card = document.createElement("div");
+          card.className = "course-card";
+          card.innerHTML = `
+            <div class="course-title">${c.title}</div>
+            <div class="course-meta">
+              <span>المرحلة: ${c.stage}</span>
+              <span>الفصل: ${c.term}</span>
+              ${c.year ? `<span>السنة: ${c.year}</span>` : ""}
+            </div>
+            ${
+              c.description
+                ? `<div class="course-desc">${c.description}</div>`
+                : ""
+            }
+            ${
+              c.videoUrl
+                ? `<div class="course-video"><iframe src="${c.videoUrl}" allowfullscreen></iframe></div>`
+                : ""
+            }
+          `;
+          studentCoursesContainer.appendChild(card);
+        });
+      }
+    }
+
+    // عرض بيانات المعلم / الكورسات
+    async function renderTeacherDashboard() {
+      if (!currentUser || currentUser.role !== "teacher") return;
+
+      teacherAvatar.textContent = shortName(currentUser.fullName || "TR");
+      teacherNameDisplay.textContent = currentUser.fullName || "";
+      teacherEmailDisplay.textContent = currentUser.email || "";
+      teacherPhoneDisplay.textContent = currentUser.phone || "";
+      teacherSubjectDisplay.textContent = currentUser.subject || "-";
+
+      const q = query(
+        collection(db, "courses"),
+        where("teacherId", "==", currentUser.id)
+      );
+      const snapshot = await getDocs(q);
+
+      teacherCoursesContainer.innerHTML = "";
+      if (snapshot.empty) {
+        teacherCoursesEmpty.classList.remove("hidden");
+      } else {
+        teacherCoursesEmpty.classList.add("hidden");
+        snapshot.forEach((docSnap) => {
+          const c = docSnap.data();
+          const card = document.createElement("div");
+          card.className = "course-card";
+          card.innerHTML = `
+            <div class="course-title">${c.title}</div>
+            <div class="course-meta">
+              <span>المرحلة: ${c.stage || "-"}</span>
+              <span>الفصل: ${c.term || "-"}</span>
+              ${c.year ? `<span>السنة: ${c.year}</span>` : ""}
+            </div>
+            ${
+              c.description
+                ? `<div class="course-desc">${c.description}</div>`
+                : ""
+            }
+            ${
+              c.videoUrl
+                ? `<div class="course-video"><iframe src="${c.videoUrl}" allowfullscreen></iframe></div>`
+                : ""
+            }
+          `;
+          teacherCoursesContainer.appendChild(card);
+        });
+      }
+    }
+
+    // دوال مساعدة للسنة الدراسية
+    function getYearOptionsForStage(stage) {
+      switch (stage) {
+        case "ابتدائي":
+          return ["الأولى", "الثانية", "الثالثة", "الرابعة", "الخامسة", "السادسة"];
+        case "إعدادي":
+        case "ثانوي":
+          return ["الأولى", "الثانية", "الثالثة"];
+        case "جامعي":
+          return ["الأولى", "الثانية", "الثالثة", "الرابعة", "الخامسة"];
+        default:
+          return [];
+      }
+    }
+
+    function populateYearSelect(selectEl, stage, currentValue) {
+      if (!selectEl) return;
+      const options = getYearOptionsForStage(stage);
+      selectEl.innerHTML = "";
+      options.forEach((label, idx) => {
+        const opt = document.createElement("option");
+        opt.value = label;
+        opt.textContent = "السنة " + label;
+        if (currentValue && currentValue === label) {
+          opt.selected = true;
+        } else if (!currentValue && idx === 0) {
+          opt.selected = true;
+        }
+        selectEl.appendChild(opt);
+      });
+    }
+
+    // تبديل بين نموذج الدخول والتسجيل
+    function showLogin() {
+      if (!loginForm || !registerForm) return;
+      loginForm.classList.remove("hidden");
+      registerForm.classList.add("hidden");
+      if (authError) authError.classList.add("hidden");
+    }
+
+    function showRegister() {
+      if (!loginForm || !registerForm) return;
+      loginForm.classList.add("hidden");
+      registerForm.classList.remove("hidden");
+      if (authError) authError.classList.add("hidden");
+    }
+
+    if (authShowLogin) {
+      authShowLogin.addEventListener("click", (e) => {
+        e.preventDefault();
+        showLogin();
+      });
+    }
+
+    if (authShowRegister) {
+      authShowRegister.addEventListener("click", (e) => {
+        e.preventDefault();
+        showRegister();
+      });
+    }
+
+    // تهيئة قوائم السنوات في النماذج
+    if (registerStudentStage && registerStudentYear) {
+      populateYearSelect(registerStudentYear, registerStudentStage.value || "ابتدائي");
+      registerStudentStage.addEventListener("change", () => {
+        populateYearSelect(registerStudentYear, registerStudentStage.value);
+      });
+    }
+
+    if (courseStage && courseYear) {
+      populateYearSelect(courseYear, courseStage.value || "ابتدائي");
+      courseStage.addEventListener("change", () => {
+        populateYearSelect(courseYear, courseStage.value);
+      });
+    }
+
+    // تعديل بيانات الطالب
+    editStudentProfileBtn.addEventListener("click", () => {
+      if (!currentUser) return;
+      editStudentName.value = currentUser.fullName || "";
+      editStudentPhone.value = currentUser.phone || "";
+      editStudentStage.value = currentUser.stage || "إعدادي";
+      editStudentTerm.value = currentUser.term || "الأول";
+      populateYearSelect(
+        editStudentYear,
+        editStudentStage.value,
+        currentUser.year || undefined
+      );
+      studentEditFormWrapper.classList.remove("hidden");
+    });
+    cancelStudentEdit.addEventListener("click", () => {
+      studentEditFormWrapper.classList.add("hidden");
+    });
+
+    studentEditForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+      currentUser.fullName = editStudentName.value.trim();
+      currentUser.phone = editStudentPhone.value.trim();
+      currentUser.stage = editStudentStage.value;
+      currentUser.term = editStudentTerm.value;
+      currentUser.year = editStudentYear.value;
+
+      // تحديث في Firestore
+      const ref = doc(db, "users", currentUser.id);
+      setDoc(ref, currentUser, { merge: true })
+        .then(() => {
+          return renderStudentDashboard();
+        })
+        .then(() => {
+          studentEditFormWrapper.classList.add("hidden");
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("حدث خطأ أثناء حفظ بيانات الطالب.");
+        });
+    });
+
+    // تعديل بيانات المعلم
+    editTeacherProfileBtn.addEventListener("click", () => {
+      if (!currentUser) return;
+      editTeacherName.value = currentUser.fullName || "";
+      editTeacherPhone.value = currentUser.phone || "";
+      editTeacherSubject.value = currentUser.subject || "اللغة العربية";
+      teacherEditFormWrapper.classList.remove("hidden");
+    });
+
+    cancelTeacherEdit.addEventListener("click", () => {
+      teacherEditFormWrapper.classList.add("hidden");
+    });
+
+    teacherEditForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+      currentUser.fullName = editTeacherName.value.trim();
+      currentUser.phone = editTeacherPhone.value.trim();
+      currentUser.subject = editTeacherSubject.value;
+
+      const ref = doc(db, "users", currentUser.id);
+      setDoc(ref, currentUser, { merge: true })
+        .then(() => renderTeacherDashboard())
+        .then(() => {
+          teacherEditFormWrapper.classList.add("hidden");
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("حدث خطأ أثناء حفظ بيانات المعلم.");
+        });
+    });
+
+    // إضافة كورس جديد بواسطة المعلم
+    courseForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser || currentUser.role !== "teacher") return;
+
+      const title = courseTitle.value.trim();
+      if (!title) return;
+
+      const newCourse = {
+        teacherId: currentUser.id,
+        title,
+        description: courseDescription.value.trim(),
+        stage: courseStage.value,
+        term: courseTerm.value,
+        year: courseYear.value,
+        videoUrl: courseVideoUrl.value.trim(),
+        createdAt: Date.now(),
+      };
+
+      try {
+        await addDoc(collection(db, "courses"), newCourse);
+        courseMessage.textContent = "تم إضافة الكورس بنجاح.";
+        courseMessage.style.display = "block";
+        courseForm.reset();
+        // إعادة تهيئة سنة الكورس بعد إعادة الضبط
+        populateYearSelect(courseYear, courseStage.value || "ابتدائي");
+        setTimeout(() => {
+          courseMessage.style.display = "none";
+        }, 1500);
+        await renderTeacherDashboard();
+      } catch (err) {
+        console.error(err);
+        courseMessage.textContent = "حدث خطأ أثناء إضافة الكورس.";
+        courseMessage.style.display = "block";
+      }
+    });
+
+    // تسجيل الدخول
+    if (loginForm) {
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!loginEmail || !loginPassword) return;
+        if (authError) authError.classList.add("hidden");
+        try {
+          await signInWithEmailAndPassword(
+            auth,
+            loginEmail.value.trim(),
+            loginPassword.value
+          );
+        } catch (err) {
+          console.error(err);
+          if (authError) {
+            authError.textContent =
+              "تعذر تسجيل الدخول، تأكد من البريد وكلمة المرور.";
+            authError.classList.remove("hidden");
+          }
+        }
+      });
+    }
+
+    // إنشاء حساب
+    if (registerForm) {
+      registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!registerEmail || !registerPassword || !registerRole) return;
+        if (authError) authError.classList.add("hidden");
+
+        const role = registerRole.value;
+        const fullName = registerFullName.value.trim();
+        const phone = registerPhone.value.trim();
+
+        try {
+          const cred = await createUserWithEmailAndPassword(
+            auth,
+            registerEmail.value.trim(),
+            registerPassword.value
+          );
+
+          const uid = cred.user.uid;
+          const baseProfile = {
+            id: uid,
+            role,
+            fullName,
+            phone,
+            email: cred.user.email,
+          };
+
+          let profile = baseProfile;
+          if (role === "student") {
+            profile = {
+              ...baseProfile,
+              stage: registerStudentStage.value,
+              term: registerStudentTerm.value,
+              year: registerStudentYear.value,
+            };
+          } else if (role === "teacher") {
+            profile = {
+              ...baseProfile,
+              subject: registerTeacherSubject.value,
+            };
+          }
+
+          await setDoc(doc(db, "users", uid), profile);
+          registerForm.reset();
+          showLogin();
+        } catch (err) {
+          console.error(err);
+          if (authError) {
+            authError.textContent =
+              "تعذر إنشاء الحساب، ربما البريد مستخدم من قبل.";
+            authError.classList.remove("hidden");
+          }
+        }
+      });
+    }
+
+    // تسجيل الخروج
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        signOut(auth).catch((err) => console.error(err));
+      });
+    }
+
+    // متابعة حالة تسجيل الدخول
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        currentUser = null;
+        if (logoutBtn) logoutBtn.style.display = "none";
+        setActiveSection(sectionAuth);
+        showLogin();
+        return;
+      }
+
+      try {
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+        const data = snap.exists() ? snap.data() : {};
+        currentUser = {
+          id: user.uid,
+          email: user.email,
+          ...data,
+        };
+
+        if (logoutBtn) logoutBtn.style.display = "inline-flex";
+
+        if (currentUser.role === "student") {
+          await renderStudentDashboard();
+          setActiveSection(sectionStudentDashboard);
+        } else if (currentUser.role === "teacher") {
+          await renderTeacherDashboard();
+          setActiveSection(sectionTeacherDashboard);
+        } else {
+          setActiveSection(sectionAuth);
+          showLogin();
+        }
+      } catch (err) {
+        console.error(err);
+        if (authError) {
+          authError.textContent = "حدث خطأ أثناء تحميل بيانات الحساب.";
+          authError.classList.remove("hidden");
+        }
+        setActiveSection(sectionAuth);
+      }
+    });
+
+    // بدأ افتراضياً على شاشة تسجيل الدخول
+    setActiveSection(sectionAuth);
+    showLogin();
+    initTheme();
+  </script>
+</body>
+</html>
